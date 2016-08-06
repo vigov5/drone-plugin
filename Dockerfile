@@ -25,6 +25,6 @@ RUN echo "export ROOT_PASSWORD=" >> /etc/profile
 
 EXPOSE 22
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/scripts/entrypoint.sh"]
 
 CMD ["/scripts/run.sh"]
