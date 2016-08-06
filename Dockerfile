@@ -22,6 +22,8 @@ RUN chmod a+x /scripts/entrypoint.sh && chmod a+x /scripts/run.sh
 
 RUN echo "export AUTHORIZED_KEYS=" >> /etc/profile
 RUN echo "export ROOT_PASSWORD=" >> /etc/profile
+RUN echo "export PLUGIN_KEY=" >> /etc/profile
+RUN echo "export SSH_KEY=" >> /etc/profile
 
 EXPOSE 22
 
