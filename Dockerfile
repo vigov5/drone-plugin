@@ -18,7 +18,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
 
 RUN mkdir /var/run/sshd && mkdir /root/.ssh/ && touch /root/.ssh/authorized_keys
 
-COPY ./laravel /
 COPY ./drone.py /scripts/drone.py
 
 EXPOSE 22
