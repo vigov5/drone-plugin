@@ -1,25 +1,50 @@
-FROM ubuntu:14.04
-MAINTAINER euclid1990
+# Dockerfile for building Ansible image for Alpine 3, with as few additional software as possible.
+#
+# @see https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md
+#
+# Version  1.0
+#
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    apt-utils \
-    apt-transport-https \
-    ca-certificates \
-    software-properties-common \
-    net-tools \
-    openssh-server \
-    python-simplejson \
-    python-pip \
-    zip \
-    vim
+# pull base image
+FROM alpine:3.4
 
-RUN apt-add-repository ppa:ansible/ansible
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ansible
+MAINTAINER William Yeh <william.pjyeh@gmail.com>
 
-RUN mkdir /var/run/sshd && mkdir /root/.ssh/ && touch /root/.ssh/authorized_keys
+
+RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
+    apk --update add sudo                                         && \
+    \
+    \
+    echo "===> Adding Python runtime..."  && \
+    apk --update add python py-pip openssl ca-certificates    && \
+    apk --update add --virtual build-dependencies \
+                python-dev libffi-dev openssl-dev build-base  && \
+    pip install --upgrade pip cffi                            && \
+    \
+    \
+    echo "===> Installing Ansible..."  && \
+    pip install ansible                && \
+    \
+    \
+    echo "===> Installing handy tools (not absolutely required)..."  && \
+    apk --update add sshpass openssh-client  && \
+    \
+    \
+    echo "===> Removing package list..."  && \
+    apk del build-dependencies            && \
+    rm -rf /var/cache/apk/*               && \
+    \
+    \
+    echo "===> Adding hosts for convenience..."  && \
+    mkdir -p /etc/ansible                        && \
+    echo 'localhost' > /etc/ansible/hosts
+
+
+# default command: display Ansible version
+CMD [ "ansible-playbook", "--version" ]
+
+RUN mkdir -p /root/.ssh/
 
 COPY ./drone.py /scripts/drone.py
-
-EXPOSE 22
 
 ENTRYPOINT ["python", "/scripts/drone.py"]
