@@ -8,6 +8,7 @@ import shlex
 
 try:
     argv = sys.argv[2]
+    print argv
     argv = json.loads(argv)
     privateKey = argv['workspace']['keys']['private']
     print '[+] Setup injected private key'
