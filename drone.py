@@ -4,7 +4,6 @@ import sys
 import os
 import json
 import subprocess
-import shlex
 
 try:
     argv = sys.argv[2]
@@ -16,15 +15,18 @@ try:
         privateKeyFile.write(privateKey)
     # cd to path
     src_path = argv['workspace']['path']
-    print '[+] cd to', src_path
     if src_path:
+        print '[+] cd to', src_path
         os.chdir(src_path)
+        print os.getcwd()
     # run commands
     print '[+] Running commands'
     commands = argv['vargs']['commands']
+    print '[+] Running following commands'
     for command in commands:
-        print '[+] Running:', command
-        print subprocess.check_output(shlex.split(command))
+        print '[+]', command
+    process = subprocess.Popen(";".join(commands), stdout=subprocess.PIPE, shell=True)
+    print process.communicate()[0].strip()
 
 except Exception, e:
     print e
